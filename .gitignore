@@ -1,0 +1,14 @@
+# Pliki tymczasowe
+*.retry
+*.log
+*.swp
+*.bak
+
+# Wirtualne środowiska
+.venv/
+__pycache__/
+
+# Hasła i sejfy Ansible (Vault)
+*.vault
+*.secret
+secrets.yml

@@ -1,0 +1,26 @@
+---
+- name: Run a command on MikroTik devices
+  hosts: mikrotik
+  gather_facts: false
+  connection: local
+
+  # Użyj tej sekcji, aby zapytać użytkownika o polecenie przy uruchamianiu
+  vars_prompt:
+    - name: command_to_run
+      prompt: "Enter the MikroTik command to run"
+      private: no
+
+  tasks:
+    - name: Run command over SSH manually
+      ansible.builtin.command: >
+        ssh -o BatchMode=yes -o StrictHostKeyChecking=no 
+        -o KexAlgorithms=+diffie-hellman-group1-sha1 
+        -o HostKeyAlgorithms=+ssh-rsa
+        {{ ansible_user }}@{{ ansible_host }} 
+        "{{ command_to_run }}"
+      register: command_output
+      changed_when: false
+
+    - name: Display command output for {{ inventory_hostname }}
+      ansible.builtin.debug:
+        var: command_output.stdout_lines

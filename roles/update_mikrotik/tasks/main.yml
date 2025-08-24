@@ -1,0 +1,34 @@
+---
+# tasks file for roles/update_mikrotik
+# tasks file for update_mikrotik
+
+- name: Check for available updates in RouterOS
+  community.routeros.command:
+    commands: /system package update check-for-updates
+  register: update_check_result
+
+- name: Set fact if update is available
+  ansible.builtin.set_fact:
+    update_available: true
+  when: "'new-version' in update_check_result.stdout[0]"
+
+- name: Display information about the available version
+  ansible.builtin.debug:
+    msg: "New version is available RouterOS: {{ update_check_result.stdout_lines[0] | regex_search('new-version: ([\\d\\.]+)', '\\1') | first }}"
+  when: update_available is defined and update_available
+
+- name: Download updates if available
+  community.routeros.command:
+    commands: /system package update download
+  when: update_available is defined and update_available
+  register: download_result
+
+- name: Stop and ask for permission to restart
+  ansible.builtin.pause:
+    prompt: "Updates for {{ inventory_hostname }} have been downloaded. A RESTART is required to install them. Do you want to continue? (type 'yes')"
+  when: download_result.changed
+
+- name: Restart Mikrotik device to install updates
+  community.routeros.command:
+    commands: /system reboot
+  when: download_result.changed

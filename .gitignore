@@ -12,5 +12,6 @@ __pycache__/
 *.vault
 *.secret
 secrets.yml
+vault.yml
 
 inventories/**/hosts.ini

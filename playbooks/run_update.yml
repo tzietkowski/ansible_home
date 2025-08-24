@@ -1,0 +1,22 @@
+  - name: Update TrueNAS SCALE
+    hosts: truenas
+    gather_facts: no
+    vars_files:
+    - ../group_vars/vault.yml
+    roles:
+      - update_truenas
+
+  - name: Update Debian/Ubuntu
+    hosts: debian_servers
+    become: yes
+
+    roles:
+      - update_debian_systems
+
+  - name: Update Mikrotik
+    hosts: mikrotik
+    gather_facts: no
+    vars_files:
+    - ../group_vars/vault.yml
+    roles:
+      - update_mikrotik

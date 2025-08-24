@@ -22,14 +22,11 @@ Projekt jest zorganizowany zgodnie z najlepszymi praktykami Ansible, co zapewnia
 ├── group_vars/
 │   ├── all/
 │   │   └── vault.yml           # CENTRALNY, ZASZYFROWANY PLIK Z SEKRETAMI
-│   └── mikrotik.yml            # Zmienne dla grupy Mikrotik (mapowanie hasła z Vault)
 ├── hosts.ini                   # Plik inwentarza, grupujący hosty wg funkcji i typu OS
 ├── playbooks/
-│   ├── run_all_updates.yml     # Główny playbook orkiestrujący wszystkie aktualizacje
-│   ├── run_check_updates.yml   # Playbook do sprawdzania stanu systemów
+│   ├── run_updates.yml     # Główny playbook orkiestrujący wszystkie aktualizacje
 │   └── ...                     # Inne playbooki operacyjne
 ├── roles/
-│   ├── check_updates/          # Rola do sprawdzania aktualizacji na Debianie (check_mode)
 │   ├── update_debian_systems/  # Rola do APLIKOWANIA aktualizacji na Debianie (moduł apt)
 │   ├── update_truenas/         # Rola do aktualizacji TrueNAS przez REST API (moduł uri)
 │   └── update_mikrotik/        # Rola do aktualizacji Mikrotik RouterOS (kolekcja community.routeros)

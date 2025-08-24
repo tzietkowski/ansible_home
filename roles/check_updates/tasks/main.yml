@@ -1,0 +1,19 @@
+---
+# tasks file for roles/check_updates
+- name: Check updates for Debian/Ubuntu
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: 'dist'
+  check_mode: yes
+  register: apt_updates
+  when: ansible_os_family == "Debian"
+
+- name: Show info about updates (Debian/Ubuntu)
+  ansible.builtin.debug:
+    msg: "System has updates available!"
+  when: ansible_os_family == "Debian" and apt_updates.changed
+
+- name: Show info about no updates (Debian/Ubuntu)
+  ansible.builtin.debug:
+    msg: "System is up to date."
+  when: ansible_os_family == "Debian" and not apt_updates.changed

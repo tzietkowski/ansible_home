@@ -1,0 +1,38 @@
+
+---
+# tasks file for update_truenas
+
+- name: Check TrueNAS SCALE
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}/api/v2.0/update/check_available"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ truenas_api_key }}"
+  register: update_check
+
+- name: Show update status
+  ansible.builtin.debug:
+    var: update_check.json
+
+- name: Download and install updates if available
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}/api/v2.0/update/update"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ truenas_api_key }}"
+    body:
+      reboot: false 
+    body_format: json
+    status_code: 200
+  when: update_check.json.status == "AVAILABLE"
+  register: update_apply
+  async: 3600  
+  poll: 60     
+
+- name: Reboot TrueNAS server if update was applied
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}/api/v2.0/system/reboot"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ truenas_api_key }}"
+  when: update_apply.changed
